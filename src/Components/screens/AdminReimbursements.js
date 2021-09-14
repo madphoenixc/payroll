@@ -7,7 +7,8 @@ import Loader from './Loader';
 function AdminReimbursements()
 {
     const [appliedReimbursment,setAppliedReimbursment]= useState([])
-    
+    const [records,setRecords]=useState('')
+    const [hidden,setHidden]=useState(false)
 
     
     useEffect(  ()=>{
@@ -20,8 +21,10 @@ function AdminReimbursements()
         fetch('https://payroll-fastify.herokuapp.com/api/companyReimbursment/'+localStorage.getItem("company_id"), requestOptions)
             .then(response => response.json())
             .then(data => {
-                setAppliedReimbursment(data);
-                console.log(appliedReimbursment);
+                if(!data.error){
+                    setAppliedReimbursment(data);
+                    console.log(appliedReimbursment);
+                }
             })
         
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,22 +38,24 @@ function AdminReimbursements()
         fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), {method: 'GET', headers: { 'Content-Type': 'application/json' }})
         .then(response => response.json())
         .then(data =>{
-            var currentLog = data.logArray;
-            currentLog.push(message);
+            if(!data.error){
+                var currentLog = data.logArray;
+                currentLog.push(message);
 
-            const requestOptions = {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    logArray:currentLog
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        logArray:currentLog
+                    })
+                };
+                
+                fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), requestOptions)
+                .then(response => response.json())
+                .then(res=>{
+                    console.log(res);
                 })
-            };
-            
-            fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), requestOptions)
-            .then(response => response.json())
-            .then(res=>{
-                console.log(res);
-            })
+            }
         })
     }
     //end
@@ -67,13 +72,15 @@ function AdminReimbursements()
             fetch('https://payroll-fastify.herokuapp.com/api/reimbursment/'+reimbursmentId, requestOptions)
             .then(response => response.json())
             .then(data => { 
-                console.log(data);
-                setAppliedReimbursment(data.reimbursment);
-                var today= new Date();
-                today=today.toString()
-                today = today.substring(4,today.length-30);
-                console.log(today);
-                addLog(data.updatedreimbursment.employeeName+"|"+data.updatedreimbursment.employeeEmail+"|Reimbursment Approved by Company|"+today);
+                if(!data.error){
+                    console.log(data);
+                    setAppliedReimbursment(data.reimbursment);
+                    var today= new Date();
+                    today=today.toString()
+                    today = today.substring(4,today.length-30);
+                    console.log(today);
+                    addLog(data.updatedreimbursment.employeeName+"|"+data.updatedreimbursment.employeeEmail+"|Reimbursment Approved by Company|"+today);
+                }
                 
             })
     }
@@ -91,13 +98,15 @@ function AdminReimbursements()
             fetch('https://payroll-fastify.herokuapp.com/api/reimbursment/'+reimbursmentId, requestOptions)
             .then(response => response.json())
             .then(data => { 
-                setAppliedReimbursment(data.reimbursment);
-                var today= new Date();
-                today=today.toString()
-                today = today.substring(4,today.length-30);
-                console.log(today);
-                addLog(data.updatedreimbursment.employeeName+"|"+data.updatedreimbursment.employeeEmail+"|Reimbursment Declined by Company|"+today);
-                console.log(data);
+                if(!data.error){
+                    setAppliedReimbursment(data.reimbursment);
+                    var today= new Date();
+                    today=today.toString()
+                    today = today.substring(4,today.length-30);
+                    console.log(today);
+                    addLog(data.updatedreimbursment.employeeName+"|"+data.updatedreimbursment.employeeEmail+"|Reimbursment Declined by Company|"+today);
+                    console.log(data);
+                }
             })
     }
 
@@ -164,7 +173,13 @@ function AdminReimbursements()
             {
                 appliedReimbursment.length === 0 
                 ?
-                <Loader />
+                <div>
+                <div hidden={hidden}>
+                    <Loader/>
+                </div>
+                <div hidden>{setTimeout(()=>{setRecords('No Records found');setHidden(true)},5000)}</div>
+                <div className="text-center" style={{marginTop:"40px"}}><b>{records}</b></div>
+                </div>
                 :
                 appliedReimbursment.map(item=>{
                     return(

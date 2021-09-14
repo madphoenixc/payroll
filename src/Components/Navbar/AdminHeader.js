@@ -91,8 +91,9 @@ function AdminHeader() {
           fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), requestOptions)
               .then(response => response.json())
               .then (data => {
-                if (!data)
-                toast.error("DB ERROR",{autoClose:2500})
+                if (data.error){
+                  toast.error(data.error,{autoClose:2500})
+                }
                 else
                 {
                     toast.success(data.message,{autoClose:2500})
@@ -137,8 +138,10 @@ function AdminHeader() {
     )
       .then((response) => response.json())
       .then((data) => {
-        setData(data.employee);
-        console.log("searchemployee", data.employee);
+        if(!data.error){
+          setData(data.employee);
+          console.log("searchemployee", data.employee);
+        }
       });
 
       const requestOptions2 = {
@@ -149,20 +152,23 @@ function AdminHeader() {
         fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem("company_id"), requestOptions2)
         .then(response => response.json())
         .then(data => {
-          setCompDetails(data);
-          setOrgName(data.company)
-          setBussiness(data.location)
-          setIndustry(data.companyType)
-          var splitAddress=data.address.split(',');
-          setPincode(splitAddress.pop());
-          setState(splitAddress.pop());
-          setCity(splitAddress.pop());
-          setAddress(splitAddress.join(","));
-          setWorkHours(data.workHours);
-          var dateFromDb = data.payDate.split('-')
-          setPayDate(dateFromDb.reverse().join('-'));
-          dateFromDb = data.payRollStartFrom.split('-')
-          setPayDateFrom(dateFromDb.reverse().join('-')) 
+          if(!data.error){
+            setCompDetails(data);
+            setOrgName(data.company)
+            setBussiness(data.location)
+            setIndustry(data.companyType)
+            var splitAddress=data.address.split(',');
+            setPincode(splitAddress.pop());
+            setState(splitAddress.pop());
+            setCity(splitAddress.pop());
+            setAddress(splitAddress.join(","));
+            setWorkHours(data.workHours);
+            var dateFromDb = data.payDate.split('-')
+            setPayDate(dateFromDb.reverse().join('-'));
+            dateFromDb = data.payRollStartFrom.split('-')
+            setPayDateFrom(dateFromDb.reverse().join('-')) 
+          }
+          
         })
   }, []);
 
@@ -229,7 +235,9 @@ function AdminHeader() {
             fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem("company_id"), requestOptions)
             .then(response => response.json())
             .then(data => {
-                return data
+                if(!data.error){
+                  return data
+                }
             })
       }
 
@@ -335,8 +343,8 @@ function AdminHeader() {
               .then(console.log(companyid))
               .then(response => response.json())
               .then(data=>{
-                if (!data)
-                  toast.error("error",{autoClose:2500})
+                if (data.error)
+                  toast.error(data.error,{autoClose:2500})
                 else
                 {
                     localStorage.setItem('company',JSON.stringify(data.updatedCompany))
@@ -465,7 +473,7 @@ function AdminHeader() {
             className="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#navbarNavDropdown"
+            data-bs-target="#navbarNavDropdown10"
             aria-controls="navbarNavDropdown"
             aria-expanded="false"
             aria-label="Toggle navigation"
@@ -474,15 +482,15 @@ function AdminHeader() {
           </button>
 
           <div
-            className="collapse right navbar-collapse d-flex justify-content-end"
-            id="navbarNavDropdown"
+            className="collapse navbar-collapse"
+            id="navbarNavDropdown10"
           >
-            <ul className="navbar-nav">
+            <ul className="navbar-nav " width="100%">
               <li>
                 <input
                   className="form-control me-2"
                   type="search"
-                  placeholder="Search Employee"
+                  placeholder="Search"
                   //aria-label="Search"
                   // className="btn-close"
                   // data-bs-dismiss="modal"
@@ -548,22 +556,22 @@ function AdminHeader() {
         <Modal.Header closeButton>
           <Modal.Title>
             <input
-              className="form-control me-2"
+              className="form-control searchinput"
               type="search"
-              placeholder="Search Employee"
+              placeholder="Search"
               aria-label="Search"
               // className="btn-close"
               // data-bs-dismiss="modal"
               onChange={(event) => searchFilterFunction(event.target.value)}
               //onClear={(event) => searchFilterFunction("")}
-              onClear={(text) => searchFilterFunction("")}
+              // onClear={(text) => searchFilterFunction("")}
               value={search}
             />
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>{renderSearchResults()}</Modal.Body>
         <Modal.Footer>
-          <button variant="secondary" onClick={handleClose}>
+          <button variant="secondary" className="btn btn-secondary" onClick={handleClose}>
             Close
           </button>
         </Modal.Footer>

@@ -13,9 +13,9 @@ function Support()
     const [phone,setPhone]=useState('')
     const [date,setDate]=useState('')
 
-   const handleSubmitted = ({res, fields, form }) => {
-        form.reset() // resets "username" field to "admin"
-      }
+    // const handleSubmitted = ({res, fields, form }) => {
+    //     form.reset() // resets "username" field to "admin"
+    //   }
     
     function Submit()
     {
@@ -28,6 +28,10 @@ function Support()
         {
             console.log(msg,file,phone,date)
             toast.success('Request Submitted',{autoClose:2500})
+            setMsg('')
+            setFile('')
+            setPhone('')
+            setDate('')
             //history.push('/home')
             // document.contact.reset();
             
@@ -39,7 +43,6 @@ function Support()
         <div id="main">
             <ToastContainer />
             <AdminHeader/>
-            <form name="contact" onSubmitted={handleSubmitted}> 
             <div className="d-block ms-5" style={{marginTop:"100px"}}>
               
                 <h4>Get in Touch with us</h4> 
@@ -64,9 +67,7 @@ function Support()
               placeholder="Phone Number"
               aria-label="Username"
               aria-describedby="basic-addon1"
-             
-              type="text"
-             
+              type="tel"   
               name="phone"
               maxLength="10"
               onChange={(event)=>{setPhone(event.target.value)}}
@@ -84,7 +85,6 @@ function Support()
                 
                 <button className="btn btn-primary mt-2 mb-4" onClick={()=>Submit()}>Submit Request</button>
             </div>
-            </form>
             
         </div>
     )

@@ -1,3 +1,4 @@
+/* eslint-disable no-sequences */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState,useEffect } from 'react';
@@ -20,14 +21,14 @@ function AdminEmployee()
     const [mail,setMail]=useState('')
     //values for updating employees
     const [updatename,setupdateName]=useState('')
-
     const [updateaddress,setupdateAddress]=useState('')
     const [updatebasicPay,setupdateBasicPay]=useState('')
     const [updaterole,setupdateRole]=useState('')
     const [updatepassword,setupdatePassword]=useState('')
     const [updatemail,setupdateMail]=useState('')
+    const [records,setRecords]=useState('')
+    const [hidden,setHidden]=useState(false)
     
-    const [earnings,setEarnings] = useState(0)
     const headers = [
         { label: "Employee Name", key: "employeeName" },
         { label: "Work Email", key: "employeeEmail" },
@@ -47,8 +48,10 @@ function AdminEmployee()
                 fetch('https://payroll-fastify.herokuapp.com/api/companyEmployee/'+localStorage.getItem("company_id"), requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    setEmpDetails(data.employee);
-                    console.log(empDetails);
+                    if(!data.error){
+                        setEmpDetails(data.employee);
+                        console.log(empDetails);
+                    }
                 })
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,14 +73,19 @@ function AdminEmployee()
             fetch('https://payroll-fastify.herokuapp.com/api/employee/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                setEmpDetails(data.allEmployee);  
-                var today= new Date();
-                today=today.toString()
-                today = today.substring(4,today.length-30);
-                addLog(data.deletedEmployee.employeeName+'|'+data.deletedEmployee.employeeEmail+'|Employee Deleted|'+today);
-                toast.success('Employee Deleted',{autoClose:2500}) 
-                // console.log(data.allEmployee);
+                if(!data.error){
+                    console.log(data);
+                    setEmpDetails(data.allEmployee);  
+                    var today= new Date();
+                    today=today.toString()
+                    today = today.substring(4,today.length-30);
+                    addLog(data.deletedEmployee.employeeName+'|'+data.deletedEmployee.employeeEmail+'|Employee Deleted|'+today);
+                    toast.success('Employee Deleted',{autoClose:2500}) 
+                    // console.log(data.allEmployee);
+                }
+                else{
+                    toast.error(data.error,{autoClose:2000})
+                }
             })
 
         console.log("deleted");
@@ -95,20 +103,23 @@ function AdminEmployee()
             fetch('https://payroll-fastify.herokuapp.com/api/employee/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
-                setupdateName(data.employeeName)
-                setupdateAddress(data.employeeAddress)
-                setupdateBasicPay(data.basicPay)
-                setupdateRole(data.role)
-                var bytes = CryptoJS.AES.decrypt(data.password, 'my-secret-key@123');
-                var password = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-                setupdatePassword(password)
-                setupdateMail(data.employeeEmail)
+                if(!data.error){
+                    setupdateName(data.employeeName)
+                    setupdateAddress(data.employeeAddress)
+                    setupdateBasicPay(data.basicPay)
+                    setupdateRole(data.role)
+                    var bytes = CryptoJS.AES.decrypt(data.password, 'my-secret-key@123');
+                    var password = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                    setupdatePassword(password)
+                    setupdateMail(data.employeeEmail)
+                }
                 // setEarnings(data)
                 // setEmpDetails(data.employee);
                 // console.log(empDetails);
             })
 
     }
+    var earningsAmount = 0
     function calculateEarnings(data){
         console.log(data);
         var amt = 0;
@@ -117,7 +128,7 @@ function AdminEmployee()
             amt += Number(element.amount);
         });
         console.log(amt);
-        setEarnings(amt);
+        earningsAmount = amt;
     }
     const updateEmp = () =>{
         var ciphertext1 = CryptoJS.AES.encrypt(JSON.stringify(updatepassword), 'my-secret-key@123').toString();
@@ -129,8 +140,8 @@ function AdminEmployee()
         else{
             updatedDeduction= ((updatebasicPay*12)/100)-1250;
         }
-        var updatedSalary = updatebasicPay + earnings - updatedDeduction;
-        console.log(updatebasicPay,earnings,updatedDeduction,updatedSalary);
+        var updatedSalary = Number(updatebasicPay) + earningsAmount - updatedDeduction;
+        console.log(updatebasicPay,earningsAmount,updatedDeduction,updatedSalary);
         //update route
         const requestOptions = {
             method: 'PUT',
@@ -151,18 +162,18 @@ function AdminEmployee()
         fetch('https://payroll-fastify.herokuapp.com/api/employee/'+id, requestOptions)
         .then(response => response.json())
         .then(data => {
-        if(!data.error){
-            console.log(data);
-            setEmpDetails(data.allEmployee)
-            var today= new Date();
-            today=today.toString()
-            today = today.substring(4,today.length-30);
-            addLog(data.updatedEmployee.employeeName+"|"+data.updatedEmployee.employeeEmail+"|Employee Details Updated|"+today);
-            toast.success('Employee Updated Successfully',{autoClose:2500})
-        }
-        else{
-            toast.error("ERROR",{autoClose:2500})
-        }
+            if(!data.error){
+                console.log(data);
+                setEmpDetails(data.allEmployee)
+                var today= new Date();
+                today=today.toString()
+                today = today.substring(4,today.length-30);
+                addLog(data.updatedEmployee.employeeName+"|"+data.updatedEmployee.employeeEmail+"|Employee Details Updated|"+today);
+                toast.success('Employee Updated Successfully',{autoClose:2500})
+            }
+            else{
+                toast.error(data.error,{autoClose:2500})
+            }
         })
     }
     //Log details Function
@@ -171,22 +182,24 @@ function AdminEmployee()
         fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), {method: 'GET', headers: { 'Content-Type': 'application/json' }})
         .then(response => response.json())
         .then(data =>{
-            var currentLog = data.logArray;
-            currentLog.push(message);
+            if(!data.error){
+                var currentLog = data.logArray;
+                currentLog.push(message);
 
-            const requestOptions = {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    logArray:currentLog
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        logArray:currentLog
+                    })
+                };
+                
+                fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), requestOptions)
+                .then(response => response.json())
+                .then(res=>{
+                    console.log(res);
                 })
-            };
-            
-            fetch('https://payroll-fastify.herokuapp.com/api/company/'+localStorage.getItem('company_id'), requestOptions)
-            .then(response => response.json())
-            .then(res=>{
-                console.log(res);
-            })
+            }
         })
     }
     //end
@@ -214,7 +227,10 @@ function AdminEmployee()
                 deductions:deduction,
                 role:role,
                 salary: 0,
-                approvedReimbursment:0
+                approvedReimbursment:0,
+                accNumber:'',
+                companyName: JSON.parse(localStorage.getItem("company")).company,
+                dateOfBirth:''
             })
         };
         console.log(empname,address,basicPay,role,password,mail);
@@ -234,7 +250,7 @@ function AdminEmployee()
 
         }
         else{
-            toast.error("ERROR",{autoClose:2500})
+            toast.error(data.error,{autoClose:2500})
         }
         })
         
@@ -325,7 +341,13 @@ function AdminEmployee()
             {
                 empDetails.length === 0
                 ?
-                <Loader />
+                <div>
+                    <div hidden={hidden}>
+                        <Loader/>
+                    </div>
+                <div hidden>{setTimeout(()=>{setRecords('No Records found');setHidden(true)},5000)}</div>
+                <div className="text-center" style={{marginTop:"40px"}}><b>{records}</b></div>
+                </div>
                 :
                 empDetails.map(items=>{
                     return (
