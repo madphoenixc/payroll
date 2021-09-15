@@ -53,8 +53,8 @@ function EmpLoginpage()
         <div className="row m-0">
           <div className="col-6 p-0">
               <div className="container">
-                <div className="emplogin row">
-                                <img alt="" src={process.env.PUBLIC_URL + "/images/payroll.png"} height="500"/>
+                <div className="emplogin row ">
+                                <img alt="" src={process.env.PUBLIC_URL + "/images/company.png"} />
                     </div>
                 </div>
           </div>

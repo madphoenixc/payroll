@@ -52,9 +52,9 @@ function Loginpage()
         <ToastContainer />
         <div className="row m-0">
           <div className="col-6 p-0">
-              <div className="container">
-                <div className="login row">
-                                <img alt="" src={process.env.PUBLIC_URL + "/images/company.png"}/>
+              <div className="ms-5 container">
+                <div className="ms-4 col-10  login row">
+                                <img alt="" src={process.env.PUBLIC_URL + "/images/login.png"} height="400"/>
                     </div>
                 </div>
           </div>
@@ -79,12 +79,6 @@ function Loginpage()
           </div>
           
         </div>
-        {/* <div className="d-flex justify-content-center align-items-center row" style={{height:"600px"}}>
-            
-
-
-           
-        </div> */}
       </React.Fragment> 
     )
 }
