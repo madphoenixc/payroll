@@ -15,7 +15,7 @@ function Statutory() {
   const [dc1, setDc1] =useState('Monthly');
   const [dc2, setDc2] =useState('Monthly');
   const [esinum, setEsinum] = useState('');
-  const [worl, setWorl] = useState(sessionStorage.getItem("company"));
+  const [worl, setWorl] = useState(sessionStorage.getItem('companyAddress'));
   const [ptnum, setPtnum] = useState('');
   const [onenum, setOnenum] = useState('1');
   const [twnum, setTwnum] = useState('');
@@ -53,7 +53,6 @@ fetch('https://payroll-fastify.herokuapp.com/api/company/'+sessionStorage.getIte
       else
       {
           toast.success(data.message,{autoClose:2500})
-          
           window.open("/salary","_self");
           // history.push('/salary');
       }
@@ -93,7 +92,15 @@ fetch('https://payroll-fastify.herokuapp.com/api/company/'+sessionStorage.getIte
       </div>
       <br/>
 
+      {/* <div className="form-group col-md-4">
+        <label for="ecr2">Employee Contribution Rate</label>
+        <select className="form-select"  value= {empcont2} onChange={(e) => setEmpcont2(e.target.value)}>
+      <option>12% of Actual PF Wage</option>
+      <option>Restrict Contribution to ₹15,000 of PF Wage</option>
+    </select>
+    </div>
 
+    <br/> */}
 
         <div className="form-group col-md-8">
         <label htmlFor="dc1">Deduction Cycle</label>  <i className="fa fa-info" data-toggle="tooltip" data-placement="bottom" title="Provident Fund (PF) contributions for each month should be deposited to the Employee Provident Fund Organisation (EPFO) within the 15th of the following month"></i>

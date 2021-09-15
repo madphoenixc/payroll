@@ -20,6 +20,7 @@ function EmployeeNavbar(){
     const [role,setRole]=useState('')
     const [salary,setSalary]=useState('')
     const [accNumber,setAccNumber] = useState('')
+    const [workLocation,setWorkLocation] = useState('')
 
     useEffect( ()=>{
         const requestOptions = {
@@ -46,6 +47,7 @@ function EmployeeNavbar(){
                     setDob(dobChanged);
                     setAccNumber(data.accNumber);
                     setAddress(data.employeeAddress);
+                    setWorkLocation(data.workLocation);
                 }
             })
 
@@ -408,7 +410,6 @@ function EmployeeNavbar(){
                             onChange={(event)=>{setCname(event.target.value)}}
                             />
                         </label>
-                        <br />
                         <label className="ename mt-3">
                             Employee Name
                             <input
@@ -421,7 +422,6 @@ function EmployeeNavbar(){
                             onChange={(event)=>{setEname(event.target.value)}}
                             />
                         </label>
-                        <br />
                         <label className="dob mt-3">
                             Employee Dob
                             <input
@@ -434,7 +434,6 @@ function EmployeeNavbar(){
                             onChange={(event)=>{setDob(event.target.value)}}
                             />
                         </label>
-                        <br />
                         <label className="mail mt-3">
                             Employee Mail
                             <input disabled
@@ -446,21 +445,7 @@ function EmployeeNavbar(){
                             value={mail}
                             onChange={(event)=>{setMail(event.target.value)}}
                             />
-                        </label>
-                        <br />
-                        <label className="address mt-3">
-                            Employee Address
-                            <input
-                            className="form-control"
-                            type="text"
-                            name="address"
-                            placeholder="Address"
-                            id="address"
-                            value={address}
-                            onChange={(event)=>{setAddress(event.target.value)}}
-                            />
-                        </label>
-                        <br />
+                        </label>                      
                         <label className="role mt-3">
                             Employee Role
                             <input disabled
@@ -473,7 +458,6 @@ function EmployeeNavbar(){
                             onChange={(event)=>{setRole(event.target.value)}}
                             />
                         </label>
-                        <br />
                         <label className="role mt-3">
                             Account Number
                             <input
@@ -486,7 +470,6 @@ function EmployeeNavbar(){
                             onChange={(event)=>{setAccNumber(event.target.value)}}
                             />
                         </label>
-                        <br />
                         <label className="salary mt-3">
                             Employee Salary
                             <input disabled
@@ -499,7 +482,31 @@ function EmployeeNavbar(){
                             onChange={(event)=>{setSalary(event.target.value)}}
                             />
                         </label>
-                        <br />
+                        <label className="address mt-3">
+                            Employee Address
+                            <input
+                            className="form-control"
+                            type="text"
+                            name="address"
+                            placeholder="Address"
+                            id="address"
+                            value={address}
+                            onChange={(event)=>{setAddress(event.target.value)}}
+                            />
+                        </label>
+                        <label className="address mt-3">
+                            Employee Work Location
+                            <input
+                            className="form-control"
+                            type="text"
+                            name="work"
+                            placeholder="Work Location"
+                            id="work"
+                            value={workLocation}
+                            onChange={(event)=>{setWorkLocation(event.target.value)}}
+                            disabled
+                            />
+                        </label>
                         <div className="modal-footer mt-3">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>updateUser()}>Update</button>
