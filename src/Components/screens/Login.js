@@ -33,8 +33,8 @@ function Loginpage()
               value=true;
               window.open("/home","_self")
               data.password=undefined;
-              localStorage.setItem('company',JSON.stringify(data))
-              localStorage.setItem('company_id',data._id);
+              sessionStorage.setItem('company',JSON.stringify(data))
+              sessionStorage.setItem('company_id',data._id);
             }
             else{
               toast.error(data.error,{autoClose:2500})
@@ -48,24 +48,44 @@ function Loginpage()
         //console.log(name,password)
     }
     return (
-        <div className="d-flex justify-content-center align-items-center " style={{height:"600px"}}>
-            <ToastContainer />
-            <div className="container text-center row border border-secondary p-5 mt-5 logininnercard" style={{width:"30%",height:"80%"}}>
-              <h1 className="col-12 mb-4">Login</h1>
-              <div className="col-12">
-              <div className="input-group mb-3 logincard">
-                <span className="input-group-text" id="basic-addon1"><i className="far fa-envelope"></i></span>
-                <input className="form-control" type="text" placeholder="Email" aria-label="Search" onChange={(event)=>setName(event.target.value)}/>
+      <React.Fragment>
+        <ToastContainer />
+        <div className="row m-0">
+          <div className="col-6 p-0">
+              <div className="container">
+                <div className="login row">
+                                <img alt="" src={process.env.PUBLIC_URL + "/images/company.png"}/>
+                    </div>
+                </div>
+          </div>
+          <div className="col-6" >
+              <div className="container p-0 ">
+                  <div className=" text-center logininnercard row">
+                      <h1 className="col-12 mt-4">Login</h1>
+                      <div className="col-12">
+                          <div className="input-group logincard">
+                            <span className="input-group-text" id="basic-addon1"><i className="far fa-envelope"></i></span>
+                            <input className="form-control" type="text" placeholder="Email" aria-label="Search" onChange={(event)=>setName(event.target.value)}/>
+                          </div>
+                          <div className="input-group my-3 logincard">
+                            <span className="input-group-text" id="basic-addon1"><i className="fas fa-unlock-alt"></i></span>
+                            <input className="form-control" type="password" placeholder="Password" aria-label="Search" onChange={(event)=>setPassword(event.target.value)}/>
+                          </div>
+                            <div className="text-center mt-5"><button className="btn btn-info w-25" onClick={() => login()}>Login</button></div>
+                      </div>
+                      <p className="mb-3">Login as User <Link to="/emplogin">Click Here</Link></p>
+                    </div>
               </div>
-              <div className="input-group mb-3 logincard">
-                <span className="input-group-text" id="basic-addon1"><i className="fas fa-unlock-alt"></i></span>
-                <input className="form-control" type="password" placeholder="Password" aria-label="Search" onChange={(event)=>setPassword(event.target.value)}/>
-              </div>
-                <div className="text-center"><button className="btn btn-primary mb-3" onClick={() => login()}>Login</button></div>
-              </div>
-              <p>Login as User <Link to="/emplogin">Click Here</Link></p>
-            </div>
+          </div>
+          
         </div>
+        {/* <div className="d-flex justify-content-center align-items-center row" style={{height:"600px"}}>
+            
+
+
+           
+        </div> */}
+      </React.Fragment> 
     )
 }
 export default Loginpage;
